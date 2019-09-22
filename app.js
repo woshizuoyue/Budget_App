@@ -140,7 +140,11 @@ var UIController = (function(){
         inputValue : '.add__value',
         inputBtn : '.add__btn',
         incomeContainer : '.income__list',
-        expenseContainer : '.expenses__list'
+        expenseContainer : '.expenses__list',
+        budgetLabel : '.budget__value',
+        incomeLabel : '.budget__income--value',
+        expenseLabel : '.budget__expenses--value',
+        percentageLabel : '.budget__expenses--percentage'
     };
 
     var operationObj = {
@@ -206,6 +210,23 @@ var UIController = (function(){
             fieldArr[0].focus();
         },
 
+        displayBudget : function(obj){
+
+            document.querySelector(DomStirng.budgetLabel).textContent = obj.budget;
+            document.querySelector(DomStirng.incomeLabel).textContent = obj.totalInc;
+            document.querySelector(DomStirng.expenseLabel).textContent = obj.totalExp;
+            
+
+            if(obj.percentage > 0){
+
+                document.querySelector(DomStirng.percentageLabel).textContent = obj.percentage + '%';
+            }else{
+
+                document.querySelector(DomStirng.percentageLabel).textContent = '---';
+            }
+
+        },
+
         getDomString : function(){
 
             return DomStirng;
@@ -242,15 +263,15 @@ var controller = (function(budgetCtrl, UICtrl){
 
         //1. calculate the budget;
 
-        BudgetController.calculateBudget();
+        budgetCtrl.calculateBudget();
 
         //2. return the budget;
 
-        var budget = BudgetController.getBudget();
+        var budget = budgetCtrl.getBudget();
 
         //3. display the budget on th UI
 
-        console.log(budget);
+        UIController.displayBudget(budget);
     }
     
     var ctrlAddItem = function(){
@@ -264,7 +285,7 @@ var controller = (function(budgetCtrl, UICtrl){
 
         if(input.description !== "" && !isNaN(input.value) && input.value > 0){
 
-            newItem = BudgetController.addItem(input.type, input.description, input.value);
+            newItem = budgetCtrl.addItem(input.type, input.description, input.value);
             //3. add the item to the UI;
 
             UIController.addListItem(newItem, input.type);
@@ -285,6 +306,15 @@ var controller = (function(budgetCtrl, UICtrl){
     return {
 
         init : function(){
+
+            UICtrl.displayBudget({
+
+                budget : 0,
+                totalInc : 0,
+                totalExp : 0,
+                percentage : -1
+
+            })
 
             setupEVentListener();
         }
